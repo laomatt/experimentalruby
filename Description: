@@ -1,0 +1,183 @@
+Description:
+
+Write a function convertBits to determine the number of bits required to convert positive integer A to positive integer B.
+
+For example, you can change 31 to 14 by flipping the 4th and 0th bit:
+
+ 31  0 0 0 1 1 1 1 1
+ 14  0 0 0 0 1 1 1 0
+---  ---------------
+bit  7 6 5 4 3 2 1 0
+Thus 31 and 14 should return 2.
+
+
+
+
+Description:
+
+The Task
+
+Create a processor class that will take in an array of items and perform an action on each item, but only if the item was not already processed. The idea is that this class will be useful for processing multiple batches of items while ensuring that each item only gets processed once, even if the item is included in multiple batches.
+
+The processor will support the following methods:
+
+process_items - will be called with an enumerable as its argument and requires a block. The block passed in is used to process the item, which will only be called if the processor determines that the item should in fact be processed. The item passed into the block will be whatever the item being processed is. So if a hash is being processed, the item will be the hash.
+processed_items - returns an array of processed items.
+identify - The purpose of this method is to allow different object instances that represent the same data to be treated as the same. If called, it will determine which hash key to use as the identifying value (if a hash is provided) or which method to use (if a non-hash item is provided). It accepts a symbol or string argument that determines the hash key/method name to be used to identify an item. If this method is not called then the item/hash instances will be compared to each other directly.
+should_process - The purpose of this method is to configure an optional callback method that will be used to determine if an item should be processed. This optional callback would return true if the item should be processed, otherwise it will return false. When this method is used, the callback passed to it will be used in conjunction with the built-in "has this item already been processed?" logic.
+reset - If called will reset the processed item state, allowing items to be reprocessed again.
+Examples:
+
+processor = BatchItemProcessor.new
+processor.process_items([1,2,3,4]) do |item|
+  # will process 1, 2, 3 and 4
+end
+
+processor.process_items([3,4,5,6]) do |item|
+  # will process 5 and 6
+end
+
+processor.reset #reset the processed items state so that we can do it all over again
+
+processor.process_items([{'id' => 1}, {'id' => 1, 'name' => 'example'}]) do |item|
+  # will process both items
+end
+
+processor.reset
+processor.identify('id')
+processor.process_items([{'id' => 1}, {'id' => 1, 'name' => 'example'}, {'id' => 2}]) do |item|
+  # will process the first and last item.
+  # the 2nd item will be skipped since identify was called and its id matches the first item.
+end
+
+processor.process_items([{'id' => 2}, {'id' => 3}]) do |item|
+  # will only process {'id' => 3}.
+  # item will equal the original item ({'id' => 3}), not just the id
+end
+
+processor.reset
+
+# now we are going to use the processor to only process items with values that are even. We do not want to process the same value twice
+processor.identify(:value)
+processor.should_process do |item|
+  item[:value] % 2 == 0
+end
+
+processor.process_items([{value: 2}, {value: 3}]) do |item|
+  # will only process {value: 2},
+end
+
+processor.process_items([{value: 2}, {value: 6}]) do |item|
+  # will only process {value: 6} since {value: 2} has already been processed
+end
+
+# here we show how the processor will behave when identify is used on non-hash items.
+class Example
+  attr_reader :name
+  def initialize(name)
+    @name = name
+  end
+end
+
+a = Example.new('a')
+b = Example.new('b')
+
+processor = BatchItemProcessor.new
+processor.identify(:name)
+processor.process_items([a, b]) do |item|
+  # will process both items
+  # item will == one of the example instances, not one of the name values
+end
+
+processor.process_items([Example.new('a')]) do |item|
+  # will not process anything, an item with the name 'a' has already been processed
+end
+
+
+
+Description:
+
+Write a function that, given a string of text (possibly with punctuation and line-breaks), returns an array of the top-3 most occurring words, in descending order of the number of occurrences.
+
+Assumptions:
+
+A word is a string of letters (A to Z) optionally containing one or more apostrophes (') in ASCII. (No need to handle fancy punctuation.)
+Matches should be case-insensitive, and the words in the result should be lowercased.
+Ties may be broken arbitrarily.
+If a text contains fewer than three unique words, then either the top-2 or top-1 words should be returned, or an empty array if a text contains no words.
+Examples:
+
+top_3_words("In a village of La Mancha, the name of which I have no desire to call to
+mind, there lived not long since one of those gentlemen that keep a lance
+in the lance-rack, an old buckler, a lean hack, and a greyhound for
+coursing. An olla of rather more beef than mutton, a salad on most
+nights, scraps on Saturdays, lentils on Fridays, and a pigeon or so extra
+on Sundays, made away with three-quarters of his income.")
+# => ["a", "of", "on"]
+
+top_3_words("e e e e DDD ddd DdD: ddd ddd aa aA Aa, bb cc cC e e e")
+# => ["e", "ddd", "aa"]
+
+top_3_words("  //wont won't won't")
+# => ["won't", "wont"]
+Bonus points (not really, but just for fun):
+
+Avoid creating an array whose memory footprint is roughly as big as the input text.
+Avoid sorting the entire array of unique words.
+Do the above in idiomatic, readable Ruby.
+
+
+
+
+
+
+
+
+
+
+Description:
+
+Your counterfeit method will be passed a coin object and a block called spend. Calling spend with coin (spend.(coin) or yield coin) should only work once; spending it again should raise an error. Can you counterfeit a new coin to spend, or trick spend into accepting coin more than once?
+
+Your solution is tested by the following code:
+
+coin = Object.new
+class << coin
+  def to_s
+    "Coin1"
+  end
+end
+
+spent = []
+counterfeit(coin) do |suspect_coin|
+  raise "Already spent #{suspect_coin}" if spent.include? suspect_coin
+  is_coin = begin
+    suspect_coin.singleton_class == coin.singleton_class
+  rescue TypeError
+    false
+  end
+  raise "Not a coin: #{suspect_coin}" unless is_coin
+  spent << suspect_coin
+end
+
+Test.expect(spent.size > 1, "Less than two coins spent")
+
+
+Snail Sort
+
+Given an n x n array, return the array elements arranged from outermost elements to the middle element, traveling clockwise.
+
+array = [[1,2,3],
+         [4,5,6],
+         [7,8,9]]
+snail(array) #=> [1,2,3,6,9,8,7,4,5]
+For better understanding, please follow the numbers of the next array consecutively:
+
+array = [[1,2,3],
+         [8,9,4],
+         [7,6,5]]
+snail(array) #=> [1,2,3,4,5,6,7,8,9]
+sol:
+def snail(array)
+  array.empty? ? [] : array.shift + snail(array.transpose.reverse)
+end

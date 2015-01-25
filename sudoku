@@ -1,0 +1,242 @@
+def sudoku(input)
+2
+  #extract initial arrays from input
+  rows=input
+  cols=(0..input.length-1).map { |e| rows.map { |f| f[e] } }
+  #fill in ds
+i=0
+    #the ith row and use the arrays in the cols in the test
+  while i<input.length
+    qwe=0
+    already=[]
+      begin
+        qwe+=1
+          currentrow=rows[i]
+          #first guess a unique row perm
+          begin
+            r=currentrow.map { |e| e==nil ? rand(1..input.length) : e }
+          end while(already.include?(r))
+          already<<r
+          puts "row #{i+1} :      #{r[0]} , #{r[1]} , #{r[2]} .... #{r[input.length-1]}\n#{(0..input.length-1).map { |e| rows[e].map { |w| w==nil ? " ": w }.join ("  ")}.join("\n")}  (#{qwe}/#{currentrow.count(nil)**input.length})"
+          #update ncols with the row numbers
+          rrows = rows.map { |e| e }
+          rrows[i] = r
+          ncols = (0..input.length-1).map { |e| rrows.map { |f| f[e] } }
+
+
+        #end loop conditions:  row numbers uniq
+      end until (r.uniq.length == r.length) && (ncols.all?{|d| d.reject{|u| u==nil}.length == d.reject{|g| g==nil}.uniq.length})# || (qwe > currentrow.count(nil)**input.length)
+      #when we find a suitable matches update the ith row and all columns
+      puts "row #{i+1} found to be #{r}"
+      rows[i]=r
+      cols=(0..input.length-1).map { |e| rows.map { |f| f[e] } }
+      i+=1
+  end
+
+  #{}"    #{rows[0]} \n    #{rows[1]} \n    #{rows[2]}"
+  "#{(0..input.length-1).map { |e| rows[e].join ("  ")}.join("\n")}   SUDOKU!!!!"
+end
+
+#puts sudoku([[1,nil,nil],[2,3,nil],[nil,nil,2]])
+
+puts sudoku([[nil,nil,3,nil,5,nil,8,nil,nil],
+            [nil,8,nil,nil,nil,nil,nil,2,nil],
+            [5,nil,nil,nil,nil,1,nil,nil,6],
+            [nil,nil,1,9,nil,4,nil,nil,nil],
+            [7,nil,nil,nil,nil,nil,nil,nil,1],
+            [nil,nil,nil,6,nil,8,9,nil,nil],
+            [6,nil,nil,2,nil,nil,nil,nil,9],
+            [nil,2,nil,nil,nil,nil,nil,7,nil],
+            [nil,nil,9,nil,6,nil,3,nil,nil]])
+
+
+
+
+
+
+def sudoku(input)
+  #extract initial arrays from input rows=input
+  rows=input
+  cols=(0..input.length-1).map { |e| rows.map { |f| f[e] } }
+  #fill in ds
+i=0
+    #the ith row and use the arrays in the cols in the test
+  while i<input.length
+    qwe=0
+    already=[]
+      begin
+        qwe+=1
+
+        ##this code finds row by row
+          currentrow=rows[i]
+          #first guess a unique row perm
+          begin
+            r=currentrow.map { |e| e==nil ? rand(1..input.length) : e }
+            puts "current guess #{r}"
+          end while(already.include?(r))
+          already<<r
+          puts "row #{i+1} : #{r}\n#{(0..input.length-1).map { |e| rows[e].map { |w| w==nil ? " ": w }.join ("  ")}.join("\n")}  (#{qwe}/#{currentrow.count(nil)**input.length})"
+          #update ncols with the row numbers
+          rrows = rows.map { |e| e }
+          rrows[i] = r
+          ncols = (0..input.length-1).map { |e| rrows.map { |f| f[e] } }
+
+
+        #end loop conditions:  row numbers uniq
+      end until (r.uniq.length == r.length) && (ncols.all?{|d| d.reject{|u| u==nil}.length == d.reject{|g| g==nil}.uniq.length})
+
+
+      #when we find a suitable matches update the ith row and all columns
+      #puts "row #{i+1} found to be #{r}"
+      rows[i]=r
+      cols=(0..input.length-1).map { |e| rows.map { |f| f[e] } }
+
+
+       ##this code finds column by column
+       cwe=0
+       alreadycol=[]
+       currentcol=cols[i]
+
+       begin
+        cwe+=1
+          currentcol=cols[i]
+          #first guess a unique col perm
+          begin
+            r=currentcol.map { |e| e==nil ? rand(1..input.length) : e }
+            puts "current guess #{r}"
+          end while(alreadycol.include?(r))
+          alreadycol<<r
+          puts "column #{i+1} : #{r}\n#{(0..input.length-1).map { |e| rows[e].map { |w| w==nil ? " ": w }.join ("  ")}.join("\n")}  (#{cwe}/#{currentcol.count(nil)**input.length})"
+          #update
+          rcols = cols.map { |e| e }
+          rcols[i] = r
+          nrows = (0..input.length-1).map { |e| rcols.map { |f| f[e] } }
+
+
+        #end loop conditions:  col numbers uniq
+      end until (r.uniq.length == r.length) && (nrows.all?{|d| d.reject{|u| u==nil}.length == d.reject{|g| g==nil}.uniq.length})
+
+      #when we find a suitable matches update the ith row and all columns
+     # puts "column #{i+1} found to be #{r}"
+      cols[i]=r
+      rows=(0..input.length-1).map { |e| cols.map { |f| f[e] } }
+
+
+      i+=1
+  end
+
+  "#{(0..input.length-1).map { |e| rows[e].join ("  ")}.join("\n")}   SUDOKU!!!!"
+end
+
+#puts sudoku([[1,nil,nil],[2,3,nil],[nil,nil,2]])
+
+puts sudoku([[nil,nil,3,nil,5,nil,8,nil,nil],
+            [nil,8,nil,nil,nil,nil,nil,2,nil],
+            [5,nil,nil,nil,nil,1,nil,nil,6],
+            [nil,nil,1,9,nil,4,nil,nil,nil],
+            [7,nil,nil,nil,nil,nil,nil,nil,1],
+            [nil,nil,nil,6,nil,8,9,nil,nil],
+            [6,nil,nil,2,nil,nil,nil,nil,9],
+            [nil,2,nil,nil,nil,nil,nil,7,nil],
+            [nil,nil,9,nil,6,nil,3,nil,nil]])
+
+
+
+
+1  7  3  4  5  6  8  9  2
+3  8  5  1  9  7  6  2  4
+5  9  7  3  2  1  4  8  6
+8  6  1  9  7  4  2  5  3
+7  4  2  8  3  9  5  6  1
+2  5  4  6  1  8  9  3  7
+6  3  8  2  4  5  7  1  9
+9  2  6  5  8  3  1  7
+4  1  9  7  6  2  3
+
+
+def sudoku(input)
+  #extract initial arrays from input rows=input
+  rows=input
+  cols=(0..input.length-1).map { |e| rows.map { |f| f[e] } }
+  #fill in ds
+i=0
+    #the ith row and use the arrays in the cols in the test
+  while i<input.length
+    qwe=0
+    already=[]
+      begin
+        qwe+=1
+
+        ##this code finds row by row
+          currentrow=rows[i]
+          #first guess a unique row perm
+          begin
+            r=currentrow.map { |e| e==nil ? rand(1..input.length) : e }
+            puts "row (guess) #{i+1} : #{r}\n#{(0..input.length-1).map { |e| rows[e].map { |w| w==nil ? " ": w }.join ("  ")}.join("\n")}  (#{qwe}/#{currentrow.count(nil)**input.length})"
+          end while(already.include?(r))
+          already<<r
+          puts "row         #{i+1} : #{r}\n#{(0..input.length-1).map { |e| rows[e].map { |w| w==nil ? " ": w }.join ("  ")}.join("\n")}  (#{qwe}/#{currentrow.count(nil)**input.length})"
+          #update ncols with the row numbers
+          rrows = rows.map { |e| e }
+          rrows[i] = r
+          ncols = (0..input.length-1).map { |e| rrows.map { |f| f[e] } }
+
+
+        #end loop conditions:  row numbers uniq
+      end until (r.uniq.length == r.length) && (ncols.all?{|d| d.reject{|u| u==nil}.length == d.reject{|g| g==nil}.uniq.length})
+
+
+      #when we find a suitable matches update the ith row and all columns
+      #puts "row #{i+1} found to be #{r}"
+      rows[i]=r
+      cols=(0..input.length-1).map { |e| rows.map { |f| f[e] } }
+
+
+       ##this code finds column by column
+       cwe=0
+       alreadycol=[]
+       currentcol=cols[i]
+
+       begin
+        cwe+=1
+          currentcol=cols[i]
+          #first guess a unique col perm
+          begin
+            r=currentcol.map { |e| e==nil ? rand(1..input.length) : e }
+            puts "column (guess) #{i+1} : #{r}\n#{(0..input.length-1).map { |e| rows[e].map { |w| w==nil ? " ": w }.join ("  ")}.join("\n")}  (#{cwe}/#{currentcol.count(nil)**input.length})"
+          end while(alreadycol.include?(r))
+          alreadycol<<r
+          puts "column         #{i+1} : #{r}\n#{(0..input.length-1).map { |e| rows[e].map { |w| w==nil ? " ": w }.join ("  ")}.join("\n")}  (#{cwe}/#{currentcol.count(nil)**input.length})"
+          #update
+          rcols = cols.map { |e| e }
+          rcols[i] = r
+          nrows = (0..input.length-1).map { |e| rcols.map { |f| f[e] } }
+
+
+
+        #end loop conditions:  col numbers uniq
+      end until (r.uniq.length == r.length) && (nrows.all?{|d| d.reject{|u| u==nil}.length == d.reject{|g| g==nil}.uniq.length})
+
+      #when we find a suitable matches update the ith row and all columns
+     # puts "column #{i+1} found to be #{r}"
+      cols[i]=r
+      rows=(0..input.length-1).map { |e| cols.map { |f| f[e] } }
+
+
+      i+=1
+  end
+
+  "#{(0..input.length-1).map { |e| rows[e].join ("  ")}.join("\n")}   SUDOKU!!!!"
+end
+
+#puts sudoku([[1,nil,nil],[2,3,nil],[nil,nil,2]])
+
+puts sudoku([[nil,nil,3,nil,5,nil,8,nil,nil],
+            [nil,8,nil,nil,nil,nil,nil,2,nil],
+            [5,nil,nil,nil,nil,1,nil,nil,6],
+            [nil,nil,1,9,nil,4,nil,nil,nil],
+            [7,nil,nil,nil,nil,nil,nil,nil,1],
+            [nil,nil,nil,6,nil,8,9,nil,nil],
+            [6,nil,nil,2,nil,nil,nil,nil,9],
+            [nil,2,nil,nil,nil,nil,nil,7,nil],
+            [nil,nil,9,nil,6,nil,3,nil,nil]])
