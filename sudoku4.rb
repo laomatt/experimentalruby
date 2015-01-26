@@ -1,11 +1,9 @@
 
-
-#########refactored sudoku ###############
-
   class Game
     def initialize(gamematrix)
-      @rows=gamematrix.clone
       @start=gamematrix
+      @rows=gamematrix.map { |e| e  }
+     # @rows=[[3,4,4,5],[5,6,7,6],[1,1,1,1],[6,6,6,6]]
       @cols=@rows.transpose
     end
 
@@ -41,8 +39,9 @@
           puts ""
           puts "#{@start}"
           #@rows.map! { |e| e.map { |f| nil } }
-          @rows[x][y]=guessNum(@cols[x],@rows[y])
-          puts "#{@start==@rows}"
+          #@rows[x][y]=guessNum(@cols[x],@rows[y])
+          @rows[x][y]=(1..@rows.length).to_a.delete_if {|e| (@rows[y].include?(e) || @cols[x].include?(e))}.sample
+          puts "                                                                       #{@start==@rows}"
           puts "#{@start}"
           puts "#{@rows}"
       end
