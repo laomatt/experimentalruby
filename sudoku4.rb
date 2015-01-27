@@ -9,7 +9,8 @@
      @nilspaces=findnils
      @startnils=findnils.map { |e| e.map { |f| f } }
      @startnillength=@startnils.length
-
+$record=0
+$cloest_solve=gamematrix
     end
 
 
@@ -39,12 +40,16 @@
           else
                 reset
           end
+          progress
+          p "-----cloest_solve-----#{$record}"
+          #display($cloest_solve)
+          #p "=========this try========"
+          display(@rows)
+          p '------------------------------'
 
-          display
         #sleep 0.4
 
       end
-
   puts "SUDOKU!!!!!"
     end
 
@@ -61,6 +66,15 @@ private
             end
         end
         return nils
+    end
+$record
+$cloest_solve
+    def progress
+      cur= (@rows.length**2) - (@rows.inject(0) {|sum,e| sum+=e.count(nil)})
+      if cur>$record
+        $record=cur
+        $cloest_solve=@rows
+      end
     end
 
     def reset
@@ -79,16 +93,18 @@ private
     return nums.sample
     end
 
-    def display
-      puts '        ----------------'
-      for g in @rows
-        out="        "
-        for l in g
-          out+= "#{'%03s' % l.to_s}"
+    def display(array)
+      puts "----------#{progress}----------"
+        n=""
+        for g in array
+          out="        "
+          for l in g
+            out+= "#{'%03s' % l.to_s}"
+          end
+          out+=" \n"
+          n<<out
         end
-        out+=" \n"
-        puts out
-      end
+        puts n
     end
 
 
@@ -109,9 +125,10 @@ private
 easygame3x3=[[1,nil,nil],[2,3,nil],[nil,nil,2]]
 easygame4x4=[[4,nil,nil,nil],[nil,3,4,nil],[nil,1,2,nil],[nil,nil,nil,1]]
 mediumgame6x6=[[nil,nil,nil,1,5,nil],[4,nil,3,nil,nil,nil],[nil,nil,nil,nil,nil,nil],[nil,3,nil,5,nil,2],[nil,nil,nil,nil,2,nil],[nil,nil,nil,nil,1,nil]]
+hard5x5game=[[5,nil,nil,nil,nil],[nil,nil,nil,5,nil],[nil,4,nil,nil,nil],[nil,nil,1,nil,nil],[nil,nil,nil,3,nil]]
 hardfuckingame9x9=[[nil,nil,2,nil,3,nil,nil,nil,nil],[5,nil,nil,9,nil,nil,nil,2,7],[4,nil,6,nil,nil,2,5,nil,nil],[nil,4,nil,nil,nil,nil,9,nil,nil],[9,nil,nil,4,8,7,nil,nil,3],[nil,nil,5,nil,nil,nil,nil,7,nil],[nil,nil,4,2,nil,nil,3,nil,8],[8,3,nil,nil,nil,4,nil,nil,2],[nil,nil,nil,nil,6,nil,7,nil,nil]]
 
-gameone=Game.new(mediumgame6x6)
+gameone=Game.new(hardfuckingame9x9)
 
 gameone.sudku
 #gameone.original
