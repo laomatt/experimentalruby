@@ -107,7 +107,7 @@ hardfuckingame9x9=[[nil,nil,2,nil,3,nil,nil,nil,nil],[5,nil,nil,9,nil,nil,nil,2,
 #gameone.sudku
 
 
-puts sudoku([[1,nil,nil],[2,3,nil],[nil,nil,2]])
+puts sudoku(mediumgame6x6)
 #puts sudoku([[4,nil,nil,nil],[nil,3,4,nil],[nil,1,2,nil],[nil,nil,nil,1]])
 
 #puts sudoku([[nil,nil,nil,nil,3],[nil,2,nil,nil,nil],[nil,nil,nil,nil,5],[nil,nil,2,1,nil],[1,nil,nil,nil,nil]])

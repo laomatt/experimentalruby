@@ -1,71 +1,109 @@
 
-  class Game
+
+#########refactored sudoku ###############
+
+    class Game
     def initialize(gamematrix)
-      @start=gamematrix
-      @rows=gamematrix.map { |e| e  }
-     # @rows=[[3,4,4,5],[5,6,7,6],[1,1,1,1],[6,6,6,6]]
-      @cols=@rows.transpose
-      p "#{@start.object_id == @rows.object_id}"
-      sleep 2.0
+      @start=gamematrix.map { |e| e.map { |f| f }  }
+      @rows=gamematrix#.map { |e| e.map { |f| f }  }
+     @nilspaces=findnils
+     @startnils=findnils.map { |e| e.map { |f| f } }
+     @startnillength=@startnils.length
+
     end
 
-    def findnils
-    #puts "finding the nils"
-    sleep 0.1
-    nilspaces=[]
-        for g in (0..@cols.length-1)
-            for p in (0..@rows.length-1)
-              if @rows[p][g] != nil
-              else
-                  nilspaces<<[g,p]
-              end
-            end
-        end
-        return nilspaces
-    end
 
 #########      main game method     #############
 #########      main game method     #############
 
     def sudku
     puts  "we\'re in the sudku method our start matrix is #{@start}"
-    sleep 0.8
-      while !win?
-        xy=findnils.sample
-        puts "#{xy}"
-          x=xy.first
-          y=xy.last
-          puts ""
-          puts "#{@cols[x]}"
-          puts "#{@rows[y]}"
-          puts ""
-          puts "#{@start}"
-          #@rows.map! { |e| e.map { |f| nil } }
-          #@rows[x][y]=guessNum(@cols[x],@rows[y])
-          @rows[x][y]=(1..@rows.length).to_a.delete_if {|e| (@rows[y].include?(e) || @cols[x].include?(e))}.sample
-          puts "                                                                       #{@start==@rows}"
-      p " Ids similar? #{@start.object_id == @rows.object_id}"
-      sleep 2.0
-          puts "#{@start}"
-          puts "#{@rows}"
-      sleep 2.0
+    #sleep 0.8
+
+      #while !win?
+      #while !@nilspaces.empty?
+      while @rows.any? { |e| e.any? { |f| f==nil } }
+          current=@nilspaces.sample
+          @nilspaces.delete(current)
+          if current!=nil
+          guessedN=guessNum(@rows.transpose[current[0]], @rows[current[1]])
+           else
+              reset
+          end
+          if guessedN != nil
+            if current!=nil
+              @rows[current[1]][current[0]]=guessedN
+            else
+              reset
+            end
+          else
+                reset
+          end
+
+          display
+        #sleep 0.4
+
+      end
+
+  puts "SUDOKU!!!!!"
+    end
+
+private
+
+    def findnils
+    nils=[]
+        for g in (0..@rows.length-1)
+            for p in (0..@rows.length-1)
+              if @rows[g][p] != nil
+              else
+                  nils<<[p,g]
+              end
+            end
+        end
+        return nils
+    end
+
+    def reset
+                @rows=@start.map { |e| e.map { |f| f } }
+                @nilspaces=@startnils.map { |e| e.map { |f| f } }
+    end
+
+
+
+    def guessNum(vset, hset)
+    (1..@rows.length).to_a.delete_if {|e| (hset.include?(e) || vset.include?(e))}.sample
+
+    nums=(1..@rows.length).to_a
+    nums.delete_if {|e| hset.include?(e) }
+    nums.delete_if {|e| vset.include?(e) }
+    return nums.sample
+    end
+
+    def display
+      puts '        ----------------'
+      for g in @rows
+        out="        "
+        for l in g
+          out+= "#{'%03s' % l.to_s}"
+        end
+        out+=" \n"
+        puts out
       end
     end
 
-     def guessNum(vset, hset)
-                              #create an array of numbers to choose from
-                              #subtract everything in the choice array thats in the hset and vset
-                              #then return a sampled number from it
-    (1..@rows.length).to_a.delete_if {|e| (hset.include?(e) || vset.include?(e))}.sample
-
-
-    end
 
     def win?
-      false
+    @rows.all? { |e| e.uniq.length==@rows.length } && @rows.transpose.all? { |e| e.uniq.length==@rows.transpose.length } && @rows.all? { |e| e.all? { |f| f!=nil  } }
     end
 
-  end
+    end
+
+
+
+
+
+
+
 
 
 easygame3x3=[[1,nil,nil],[2,3,nil],[nil,nil,2]]
@@ -73,7 +111,7 @@ easygame4x4=[[4,nil,nil,nil],[nil,3,4,nil],[nil,1,2,nil],[nil,nil,nil,1]]
 mediumgame6x6=[[nil,nil,nil,1,5,nil],[4,nil,3,nil,nil,nil],[nil,nil,nil,nil,nil,nil],[nil,3,nil,5,nil,2],[nil,nil,nil,nil,2,nil],[nil,nil,nil,nil,1,nil]]
 hardfuckingame9x9=[[nil,nil,2,nil,3,nil,nil,nil,nil],[5,nil,nil,9,nil,nil,nil,2,7],[4,nil,6,nil,nil,2,5,nil,nil],[nil,4,nil,nil,nil,nil,9,nil,nil],[9,nil,nil,4,8,7,nil,nil,3],[nil,nil,5,nil,nil,nil,nil,7,nil],[nil,nil,4,2,nil,nil,3,nil,8],[8,3,nil,nil,nil,4,nil,nil,2],[nil,nil,nil,nil,6,nil,7,nil,nil]]
 
-gameone=Game.new(easygame4x4)
+gameone=Game.new(mediumgame6x6)
 
 gameone.sudku
 #gameone.original
@@ -83,3 +121,16 @@ gameone.sudku
 #puts sudoku([[4,nil,nil,nil],[nil,3,4,nil],[nil,1,2,nil],[nil,nil,nil,1]])
 
 #puts sudoku([[nil,nil,nil,nil,3],[nil,2,nil,nil,nil],[nil,nil,nil,nil,5],[nil,nil,2,1,nil],[1,nil,nil,nil,nil]])
+
+
+
+#########    hard problems   ############
+#puts sudoku([[nil,nil,nil,1,5,nil],[4,nil,3,nil,nil,nil],[nil,nil,nil,nil,nil],[nil,3,nil,5,nil,2],[nil,nil,nil,nil,2,nil],[nil,nil,nil,nil,1,nil]])
+#puts sudoku([[nil,nil,3,nil,5,nil,8,nil,nil],[nil,8,nil,nil,nil,nil,nil,2,nil],[5,nil,nil,nil,nil,1,nil,nil,6],[nil,nil,1,9,nil,4,nil,nil,nil],[7,nil,nil,nil,nil,nil,nil,nil,1],[nil,nil,nil,6,nil,8,9,nil,nil],[6,nil,nil,2,nil,nil,nil,nil,9],[nil,2,nil,nil,nil,nil,nil,7,nil],[nil,nil,9,nil,6,nil,3,nil,nil]])
+#puts sudoku([[nil,nil,nil,nil,nil],[nil,4,nil,nil,nil],[nil,nil,nil,5,nil],[1,nil,nil,nil,nil],[nil,nil,5,nil,2]])
+#puts sudoku([[nil,2,nil,4,nil],[nil,nil,3,nil,nil],[nil,1,nil,2,nil],[nil,4,nil,nil,nil],[nil,nil,nil,nil,4]])
+#puts sudoku([[5,nil,nil,nil,nil],[nil,nil,nil,5,nil],[nil,4,nil,nil,nil],[nil,nil,1,nil,nil],[nil,nil,nil,3,nil]])
+#puts sudoku([[nil,nil,4,6,nil,nil],[nil,3,nil,nil,nil,nil],[3,4,nil,2,nil,nil],[5,nil,2,nil,6,nil],[2,5,nil,nil,3,nil],[nil,nil,nil,nil,nil,1]])
+##puts sudoku([[nil,5,nil,nil,nil,2],[nil,nil,nil,nil,nil,4],[nil,nil,4,1,nil,nil],[1,nil,3,2,nil,nil],[2,nil,nil,nil,6,nil],[nil,4,1,5,2,nil]])
+#puts sudoku([[nil,nil,2,nil,3,nil,nil,nil,nil],[5,nil,nil,9,nil,nil,nil,2,7],[4,nil,6,nil,nil,2,5,nil,nil],[nil,4,nil,nil,nil,nil,9,nil,nil],[9,nil,nil,4,8,7,nil,nil,3],[nil,nil,5,nil,nil,nil,nil,7,nil],[nil,nil,4,2,nil,nil,3,nil,8],[8,3,nil,nil,nil,4,nil,nil,2],[nil,nil,nil,nil,6,nil,7,nil,nil]])
+
