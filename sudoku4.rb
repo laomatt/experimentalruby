@@ -6,11 +6,11 @@
     def initialize(gamematrix)
       @start=gamematrix.map { |e| e.map { |f| f }  }
       @rows=gamematrix#.map { |e| e.map { |f| f }  }
-     @nilspaces=findnils
-     @startnils=findnils.map { |e| e.map { |f| f } }
-     @startnillength=@startnils.length
-$record=0
-$cloest_solve=gamematrix
+      @nilspaces=findnils
+       @startnils=findnils.map { |e| e.map { |f| f } }
+       @startnillength=@startnils.length
+        $record=0
+        $cloest_solve=gamematrix
     end
 
 
@@ -18,43 +18,38 @@ $cloest_solve=gamematrix
 #########      main game method     #############
 
     def sudku
-    puts  "we\'re in the sudku method our start matrix is #{@start}"
-    #sleep 0.8
-
-      #while !win?
-      #while !@nilspaces.empty?
+      counter=0
       while @rows.any? { |e| e.any? { |f| f==nil } }
+        #current variable is randomly picked from @nilspaces
           current=@nilspaces.sample
           @nilspaces.delete(current)
+          #if current is not empty we run it through our guessNum
           if current!=nil
-          guessedN=guessNum(@rows.transpose[current[0]], @rows[current[1]])
-           else
+            guessedN=guessNum(@rows.transpose[current[0]], @rows[current[1]])
+          else
+            #if its empty we reset
               reset
           end
+          #guessdN is either a number or nil, if its a number..
           if guessedN != nil
             if current!=nil
               @rows[current[1]][current[0]]=guessedN
             else
-              reset
+              reset #if current nilsapce is nil
             end
           else
-                reset
+                reset#if guessedN returns nil, we reset
           end
+          counter+=1
           progress
-          p "-----cloest_solve-----#{$record}"
-          #display($cloest_solve)
-          #p "=========this try========"
           display(@rows)
-          p '------------------------------'
-
-        #sleep 0.4
-
+          p "                     number of attempts #{counter}"
       end
   puts "SUDOKU!!!!!"
     end
 
 private
-
+    #this method finds all the nill coordinates in the current board
     def findnils
     nils=[]
         for g in (0..@rows.length-1)
@@ -67,8 +62,8 @@ private
         end
         return nils
     end
-$record
-$cloest_solve
+
+    #this keeps progression of numbers
     def progress
       cur= (@rows.length**2) - (@rows.inject(0) {|sum,e| sum+=e.count(nil)})
       if cur>$record
@@ -83,7 +78,7 @@ $cloest_solve
     end
 
 
-
+#guesses a number for a given space based on adjacent rows/cols
     def guessNum(vset, hset)
     (1..@rows.length).to_a.delete_if {|e| (hset.include?(e) || vset.include?(e))}.sample
 
@@ -92,9 +87,9 @@ $cloest_solve
     nums.delete_if {|e| vset.include?(e) }
     return nums.sample
     end
-
+#displays current board
     def display(array)
-      puts "----------#{progress}----------"
+              p "-----closest_solve-----#{$record}"
         n=""
         for g in array
           out="        "
@@ -105,9 +100,11 @@ $cloest_solve
           n<<out
         end
         puts n
+                  p '------------------------------'
+
     end
 
-
+#win conditions
     def win?
     @rows.all? { |e| e.uniq.length==@rows.length } && @rows.transpose.all? { |e| e.uniq.length==@rows.transpose.length } && @rows.all? { |e| e.all? { |f| f!=nil  } }
     end
@@ -128,7 +125,7 @@ mediumgame6x6=[[nil,nil,nil,1,5,nil],[4,nil,3,nil,nil,nil],[nil,nil,nil,nil,nil,
 hard5x5game=[[5,nil,nil,nil,nil],[nil,nil,nil,5,nil],[nil,4,nil,nil,nil],[nil,nil,1,nil,nil],[nil,nil,nil,3,nil]]
 hardfuckingame9x9=[[nil,nil,2,nil,3,nil,nil,nil,nil],[5,nil,nil,9,nil,nil,nil,2,7],[4,nil,6,nil,nil,2,5,nil,nil],[nil,4,nil,nil,nil,nil,9,nil,nil],[9,nil,nil,4,8,7,nil,nil,3],[nil,nil,5,nil,nil,nil,nil,7,nil],[nil,nil,4,2,nil,nil,3,nil,8],[8,3,nil,nil,nil,4,nil,nil,2],[nil,nil,nil,nil,6,nil,7,nil,nil]]
 
-gameone=Game.new(hardfuckingame9x9)
+gameone=Game.new(mediumgame6x6)
 
 gameone.sudku
 #gameone.original
